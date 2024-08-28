@@ -20,3 +20,4 @@ class Customer(models.Model):
 
     def __str__(self):
         return f'{self.email} - {self.product.name} - Position {self.position_number}'
+    
