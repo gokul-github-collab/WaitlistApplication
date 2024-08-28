@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.response import Response
+from django.utils.crypto import get_random_string
 
 # Checks if the current user is a superuser
 class CheckSuperUser(APIView):
@@ -110,8 +111,16 @@ class CheckPositionAndSendEmailAPIView(APIView):
         return Response({'status': 'failure', 'message': 'Customer position is not 1.'}, status=status.HTTP_400_BAD_REQUEST)
 
     def send_email(self, customer):
+        # Generate a random coupon code
+        coupon_code = get_random_string(12).upper()
+
         subject = 'Congratulations on Your Position!'
-        message = f'Hello, {customer.email}! You are now in position {customer.position_number} for the product {customer.product.name}.'
+        message = (
+            f'Hello, {customer.email}!\n\n'
+            f'You are now in position {customer.position_number} for the product {customer.product.name}.\n'
+            f'Here is your coupon code: {coupon_code}\n\n'
+            'Thank you for participating!'
+        )
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [customer.email]
 
