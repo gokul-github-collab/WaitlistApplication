@@ -7,13 +7,10 @@ const ProductList = () => {
 
     // Function to fetch products from the API
     const getProducts = async () => {
-        try {
-            const res = await api.get('api/products/');
-            setProducts(res ? res.data : []); // Update state with fetched products
-            console.log(res.data); // Log fetched products for debugging
-        } catch (err) {
-            console.error(err); // Log any errors during the fetch
-        }
+
+        const res = await api.get('api/products/');
+        setProducts(res ? res.data : []); // Update state with fetched products
+
     };
 
     // Fetch products when the component mounts

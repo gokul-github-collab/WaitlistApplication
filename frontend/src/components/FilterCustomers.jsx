@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 
-// Component to display a list of customers registered for a specific product
 const FilterCustomers = ({ product_id }) => {
     const [customers, setCustomers] = useState([]);
 
-    // Fetch the list of customers registered for the product
     const getCustomers = async () => {
         try {
             const res = await api.get(`api/products/${product_id}/customers/`);
@@ -15,25 +13,22 @@ const FilterCustomers = ({ product_id }) => {
         }
     };
 
-    // Fetch customers whenever the product_id changes
     useEffect(() => {
         getCustomers();
     }, [product_id]);
 
     return (
-        <div className="p-4 bg-white rounded-lg shadow-md">
-            {/* Title of the section */}
-            <h1 className="text-2xl font-bold mb-4">Registered Customers</h1>
-            {/* Display list of customers or a message if there are none */}
+        <div className="p-6 bg-gray-50 rounded-lg shadow-lg mt-6">
+            <h1 className="text-2xl font-semibold text-gray-800 mb-6">Registered Customers</h1>
             {customers.length > 0 ? (
                 customers.map(customer => (
                     <div key={customer.id} className="mb-4">
-                        {/* Customer information */}
-                        <div className="flex flex-row justify-between items-center bg-gray-100 p-3 rounded-lg">
-                            <h2 className="text-lg font-semibold text-gray-800">{customer.email}</h2>
-                            <p className="text-lg text-gray-600">Position: {customer.position_number}</p>
+                        <div className="flex flex-row justify-between items-center bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                            <h2 className="text-lg font-medium text-gray-700">{customer.email}</h2>
+                            <p className="text-lg text-gray-500">Referral ID: {customer.referral_id}</p>
+                            <p className="text-lg text-gray-500">Position: {customer.position_number}</p>
                         </div>
-                        <hr className="my-2 border-gray-300" />
+                        <hr className="my-2 border-gray-200" />
                     </div>
                 ))
             ) : (

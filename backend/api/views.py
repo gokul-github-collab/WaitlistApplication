@@ -1,4 +1,4 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView, DestroyAPIView
 from rest_framework.permissions import AllowAny
 from .models import Product, Customer
 from .serializers import CustomerSerializer, ProductSerializer, RegisterSerializer
@@ -65,6 +65,11 @@ class ProductRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
     permission_class = [AllowAny]
 
+
+class ProductDelete(DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
 # Lists and creates customers
 class CustomerListCreateView(ListCreateAPIView):
     queryset = Customer.objects.all()

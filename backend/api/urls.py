@@ -10,7 +10,7 @@ from .views import (
     CheckUserRegistered,
     FilterCustomersForProducts,
     CheckPositionAndSendEmailAPIView,
-    CustomerRetrieveyView
+    CustomerRetrieveyView, ProductDelete
 )
 
 urlpatterns = [
@@ -22,6 +22,7 @@ urlpatterns = [
     
     path('products/', ProductListCreateView.as_view(), name='product-list'),
     path('products/<int:pk>/', ProductRetrieveUpdateDestroyView.as_view(), name='product-detail'),
+     path("products/delete/<int:pk>/", ProductDelete.as_view(), name="produc-delete"),
     path('products/<int:p_id>/customers/', 
          FilterCustomersForProducts.as_view(), name='filter-customers'),
     

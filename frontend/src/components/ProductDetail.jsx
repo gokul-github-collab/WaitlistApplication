@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import v1 from '../assets/images/v1.jpg';
+import v2 from '../assets/images/v2.jpg';
 import h1 from '../assets/images/horizontal2.jpg';
 import h2 from '../assets/images/horizontal.jpeg';
 import api from '../api';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import FilterCustomers from './FilterCustomers';
 import RegisterCustomer from './RegisterCustomer';
+import DeleteProduct from './DeleteProduct';
 
 // Component to display product details along with registration and filtering features
 const ProductDetail = () => {
@@ -77,14 +79,14 @@ const ProductDetail = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
                     {/* Main product image */}
                     <img src={v1} className="rounded-lg w-full" alt="Product Image" />
-                    <div className="space-y-4">
+                    <div className="space-y-1">
                         {/* Product thumbnails */}
-                        <img src={h1} className="rounded-lg w-full" alt="Product Thumbnail 1" />
-                        <img src={h2} className="rounded-lg w-full" alt="Product Thumbnail 2" />
+                        <img src={h2} className="rounded-lg h-1/2" alt="Product Thumbnail 1" />
+                        <img src={h1} className="rounded-lg h-1/2" alt="Product Thumbnail 2" />
                     </div>
                     <div className="space-y-4">
                         {/* Another view of the main product image */}
-                        <img src={v1} className="rounded-lg w-full" alt="Product Image" />
+                        <img src={v2} className="rounded-lg w-full " alt="Product Image" />
                     </div>
                 </div>
 
@@ -95,39 +97,58 @@ const ProductDetail = () => {
                             <h1 className="text-4xl font-extrabold text-gray-900">{product ? product.name : ""}</h1>
                             {/* Product description */}
                             <p className="text-lg text-gray-700 mt-4">
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis sequi voluptatum deleniti porro veniam labore quae unde. Eos autem alias tenetur cum quaerat at maiores ullam possimus, quas, error nostrum?
+                                Apple devices are renowned for their design aesthetic and attention to detail. Tight integration between hardware and software gives their systems a performance advantage over competitor systems with similar specifications.
                             </p>
                             <div className="md:flex md:space-x-6">
                                 <div className="flex-1 space-y-4">
                                     {/* Product highlights */}
                                     <h2 className="text-xl font-semibold text-gray-800 mt-3">Highlights</h2>
                                     <ul className="list-disc list-inside pl-5 text-gray-600 space-y-2">
-                                        <li>Lorem ipsum dolor sit amet.</li>
-                                        <li>Lorem ipsum dolor sit amet.</li>
-                                        <li>Lorem ipsum dolor sit amet.</li>
-                                        <li>Lorem ipsum dolor sit amet.</li>
+                                        <li>Mac computer. The Macintosh, or Mac, is Apple's line of personal computers</li>
+                                        <li>iPhone and iPad. The iPhone is Apple's smartphone line, and the iPad is its tablet.</li>
+                                        <li>Services. Apple also provides several services that seamlessly work with its products.</li>
+                                        <li>The Apple Vision Pro is a mixed reality</li>
                                     </ul>
                                 </div>
                             </div>
                             {/* Show filter component if the user is a superuser */}
-                            {isSuperUser && <FilterCustomers product_id={id} />}
+                            {isSuperUser && (
+                                <div className="">
+                                    <FilterCustomers product_id={id} />
+
+                                </div>
+
+                            )}
                         </div>
                         <div className="md:w-1/4 mt-6 md:mt-0">
                             {/* Registration component */}
                             <RegisterCustomer product_id={id} referral_id={referral_id} />
+
+
                         </div>
+                        {isSuperUser && (
+                            <>
+                                <div className="flex flex-col">
+
+                                    <Link to={`/edit-product/${product ? product.id : ""}`} className="p-3 px-6 bg-gradient-to-t from-indigo-500 via-indigo-700 to-indigo-600 text-white mt-12 rounded-lg" >Edit Product</Link>
+                                    <DeleteProduct product_id={product ? product.id : ""} />
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {/* Display registration status if logged in and registered */}
                     {isLoggedIn && customerIsRegistered && (
-                        <div className="bg-gray-50 p-4 rounded-lg shadow-inner mt-6">
-                            <h2 className="text-lg font-semibold text-gray-800">Already Registered</h2>
-                            <p className="text-sm text-gray-600">Position: {registeredCustomerPosition}</p>
+                        <div className="bg-gradient-to-r from-brightRedLight via-red-600 to-brightRed p-4 rounded-lg shadow-lg mt-6">
+                            <h2 className="text-lg font-semibold text-white mb-2">You're Already Registered!</h2>
+                            <p className="text-xl font-bold text-white">Position: <span className="text-yellow-300">{registeredCustomerPosition}</span></p>
+                            <p className="text-sm text-white mt-2">Thank you for joining the waitlist. Share your referral link to climb up the list!</p>
                         </div>
                     )}
+
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

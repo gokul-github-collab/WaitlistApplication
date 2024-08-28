@@ -11,6 +11,8 @@ import AddProduct from './components/AddProduct';
 import Products from './pages/ProductListPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import PositionNumber from './components/PositionNumber';
+import EditProduct from './components/EditProduct';
+
 const Logout = () => {
   localStorage.clear()
   return <Navigate to="/login" />
@@ -30,12 +32,12 @@ const router = createBrowserRouter(
         <Route path='/products' element={<Products />} />
         <Route path='/products/:id' element={<ProductDetailPage />} />
         <Route path='/products/:id/:referral_id' element={<ProductDetailPage />} />
-        <Route path='/add-product' element={<ProtectedRoute> <AddProduct />
-
-
-        </ProtectedRoute>} />
+        <Route path='/add-product' element={<ProtectedRoute> <AddProduct /> </ProtectedRoute>} />
+        <Route path='/edit-product/:product_id' element={<ProtectedRoute> <EditProduct /> </ProtectedRoute>} />
         <Route path='/position/:no/:ref_no/:p_id/:email' element={<PositionNumber />} />
         <Route path='/position/:email/:product_id' element={<PositionNumber />} />
+
+
 
       </Route>
 
