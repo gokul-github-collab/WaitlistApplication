@@ -1,5 +1,5 @@
 import React from 'react';
-import vision from '../assets/images/vision.jpg';
+import vision from '../assets/images/horizontal2.jpg';
 import { Link } from 'react-router-dom';
 import { FaArrowRight } from "react-icons/fa6";
 
