@@ -1,51 +1,51 @@
-import React, { useEffect, useState } from 'react'
-import api from '../api'
-import Hero from '../components/Hero'
-import Feature from '../components/Feature'
-import Testimonial from '../components/Testimonial'
-import CTA from '../components/CTA'
-import Card from '../components/Card'
-const HomePage = () => {
-    const [products, setProducts] = useState([])
+import React, { useEffect, useState } from 'react';
+import api from '../api';
 
+import Hero from '../components/Hero';
+import Feature from '../components/Feature';
+import Testimonial from '../components/Testimonial';
+import CTA from '../components/CTA';
+import Card from '../components/Card';
+import Grid from '../components/Grid.jsx'
+const HomePage = () => {
+    const [products, setProducts] = useState([]);
 
     const getProducts = async () => {
         try {
-
-            const res = await api.get('api/products/')
-            setProducts(res ? res.data : [])
-            console.log(res.data)
+            const res = await api.get('api/products/');
+            setProducts(res ? res.data : []);
+            console.log(res.data);
         } catch (err) {
-            console.error(err)
+            console.error(err);
         }
-    }
+    };
+
     useEffect(() => {
-        getProducts()
-    }, [])
+        getProducts();
+    }, []);
 
     return (
         <>
-
             <Hero />
+            <Grid />
             <Feature />
 
-            <div className="container mx-auto mt-10 ">
-                <div className="flex flex-col items-center">
+            <div className="container mx-auto mt-10 bg-orange-50">
+                <div className="text-center">
+                    <h1 className='text-4xl font-bold m-6'>Explore our Products</h1>
 
-                    <h1 className=' text-4xl font-bold m-6'>Explore our Products</h1>
-                    <div className="flex space-x-6">
-
+                    {/* Grid layout for products */}
+                    <div className="grid  gap-6 sm:grid-cols-1 md:grid-cols-3">
                         {products.slice(0, 3).map((product) => (
-                            <Card className='md:w-1/3 ' product={product} key={product.id} />
+                            <Card product={product} key={product.id} />
                         ))}
                     </div>
                 </div>
             </div>
             <Testimonial />
             <CTA />
-
         </>
-    )
-}
+    );
+};
 
-export default HomePage
+export default HomePage;

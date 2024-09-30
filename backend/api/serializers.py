@@ -23,9 +23,11 @@ class CustomerSerializer(serializers.ModelSerializer):
 # Serializes product data, including associated customers
 class ProductSerializer(serializers.ModelSerializer):
     customers = CustomerSerializer(many=True, read_only=True)
+
     class Meta:
         model = Product
-        fields = ('id', 'name', 'customers')
+        fields = ('id', 'name', 'created_by', 'customers', 'card_image')
+
 
 # Handles customer registration logic, including position and referral processing
 class RegisterSerializer(serializers.ModelSerializer):

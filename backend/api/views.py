@@ -58,7 +58,12 @@ class CreateUserView(CreateAPIView):
 class ProductListCreateView(ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_class = [AllowAny]
+    permission_classes = [AllowAny]
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        # Pass the user to the 'created_by' field during save
+        serializer.save(created_by=user)
 
 # Retrieves, updates, and destroys products
 class ProductRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):

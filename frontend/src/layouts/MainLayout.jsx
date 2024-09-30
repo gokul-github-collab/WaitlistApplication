@@ -6,10 +6,13 @@ import 'react-toastify/dist/ReactToastify.css'
 
 const MainLayout = () => {
     return (<>
-
-        <Navbar />
+<div className='bg-orange-50 font-poppins ' >
+     <Navbar />
         <Outlet />
         <ToastContainer />
+
+</div>
+
 
     </>)
 

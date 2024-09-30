@@ -74,11 +74,11 @@ const ProductDetail = () => {
     };
 
     return (
-        <div className="bg-gray-100 min-h-screen py-10 px-4">
-            <div className="container mx-auto max-w-7xl bg-white shadow-md rounded-lg overflow-hidden">
+        <div className="bg-orange-100 min-h-screen py-10 px-4">
+            <div className="container bg-orange-50 mx-auto max-w-7xl  shadow-md rounded-lg overflow-hidden">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
                     {/* Main product image */}
-                    <img src={v1} className="rounded-lg w-full" alt="Product Image" />
+                    <img src={v1} className="rounded-3xl w-full bg-orange-50" alt="Product Image" />
                     <div className="space-y-1">
                         {/* Product thumbnails */}
                         <img src={h2} className="rounded-lg h-1/2" alt="Product Thumbnail 1" />
@@ -86,7 +86,7 @@ const ProductDetail = () => {
                     </div>
                     <div className="space-y-4">
                         {/* Another view of the main product image */}
-                        <img src={v2} className="rounded-lg w-full " alt="Product Image" />
+                        <img src={v2} className="rounded-3xl w-full bg-orange-50" alt="Product Image" />
                     </div>
                 </div>
 
@@ -130,7 +130,7 @@ const ProductDetail = () => {
                             <>
                                 <div className="flex flex-col">
 
-                                    <Link to={`/edit-product/${product ? product.id : ""}`} className="p-3 px-6 bg-gradient-to-t from-indigo-500 via-indigo-700 to-indigo-600 text-white mt-12 rounded-lg" >Edit Product</Link>
+                                    <Link to={`/edit-product/${product ? product.id : ""}`} className="inline bg-gradient-to-tr mt-2 from-indigo-500 to-indigo-700 mb-1 text-white text-center rounded-lg px-4 py-2 hover:bg-indigo-600 hover:to-indigo-800 shadow-md" >Edit Product</Link>
                                     <DeleteProduct product_id={product ? product.id : ""} />
                                 </div>
                             </>

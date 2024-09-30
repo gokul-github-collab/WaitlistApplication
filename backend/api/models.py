@@ -1,9 +1,14 @@
 from django.db import models
 from django.utils.crypto import get_random_string
-
+from custom_user.models import User
 class Product(models.Model):
     name = models.CharField(max_length=255)  # Stores the name of the product
-
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    card_image = models.ImageField(upload_to='product_images/',
+        blank=True,
+        null=True,
+        default='default_images/default_card_image.jpg'  # Default image
+    )
     def __str__(self):
         return self.name
 

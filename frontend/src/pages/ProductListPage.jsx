@@ -20,13 +20,13 @@ const ProductList = () => {
 
     return (
         <div className="container mx-auto mt-10">
-            <div className="flex flex-col items-center">
-                <h1 className='text-4xl font-bold m-6'>Explore our Products</h1>
-                <div className="flex flex-wrap">
+            <div className="flex flex-col ">
+                <h1 className='text-4xl font-bold m-6 text-center'>Explore our Products</h1>
+                <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-3 ">
                     {products.map((product) => (
-                        <div className="w-1/3 p-3" key={product.id}>
-                            <Card product={product} /> {/* Render a Card component for each product */}
-                        </div>
+
+                            <Card product={product} key={product.id}/>
+
                     ))}
                 </div>
             </div>

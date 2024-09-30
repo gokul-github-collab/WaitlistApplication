@@ -9,6 +9,7 @@ const EditProduct = () => {
     const { product_id } = useParams(); // Get the product ID from the URL
     const [isSuperUser, setIsSuperUser] = useState(false);
     const [name, setName] = useState('');
+    const [cardImage, setCardImage] = useState(null); // New state for card_image
 
     useEffect(() => {
         checkSuperuser();
@@ -17,6 +18,7 @@ const EditProduct = () => {
         }
     }, [product_id]);
 
+    // Check if the user is a superuser
     const checkSuperuser = async () => {
         try {
             const res = await api.get("/api/super-user/");
@@ -27,23 +29,33 @@ const EditProduct = () => {
         }
     };
 
+    // Fetch product details for editing
     const fetchProductDetails = async (id) => {
         try {
             const res = await api.get(`/api/products/${id}/`);
             setName(res.data.name); // Pre-fill the form with product name
+            setCardImage(res.data.card_image); // Pre-fill the form with card image if exists
         } catch (err) {
             console.error("Error fetching product details:", err);
             toast.error("Error fetching product details");
         }
     };
 
+    // Handle form submission to update product
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const productData = { name };
+        const productData = new FormData();
+        productData.append('name', name);
+        if (cardImage) {
+            productData.append('card_image', cardImage); // Append the image file if uploaded
+        }
 
         try {
-            // Update product if editing
-            await api.put(`/api/products/${product_id}/`, productData);
+            await api.put(`/api/products/${product_id}/`, productData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Set the header for file uploads
+                },
+            });
             toast('Product updated successfully');
             navigate(`/`); // Redirect to the homepage or product list after update
         } catch (err) {
@@ -51,10 +63,15 @@ const EditProduct = () => {
         }
     };
 
+    // Handle file input change for the image
+    const handleImageChange = (e) => {
+        setCardImage(e.target.files[0]); // Set the selected file
+    };
+
     return (
         <>
             {isSuperUser ? (
-                <div className="isolate bg-gray-100 px-6 py-24 sm:py-32 lg:px-8">
+                <div className="isolate bg-orange-100 px-6 py-24 sm:py-32 lg:px-8">
                     <div className="mx-auto max-w-2xl text-center">
                         <h2 className="text-3xl font-bold tracking-tight text-brightRed sm:text-4xl">
                             Edit Product
@@ -76,6 +93,25 @@ const EditProduct = () => {
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label htmlFor="card_image" className="block text-sm font-semibold leading-6 text-gray-900">
+                                    Card Image
+                                </label>
+                                <div className="mt-2.5">
+                                    <input
+                                        type="file"
+                                        name="card_image"
+                                        id="card_image"
+                                        onChange={handleImageChange} // Handle file input change
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                                {cardImage && typeof cardImage === 'string' && (
+                                    <div className="mt-2">
+                                        <img src={cardImage} alt="Product Card" className="w-full h-64 object-cover" />
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="mt-10">
