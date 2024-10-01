@@ -36,18 +36,58 @@ class CheckUserRegistered(APIView):
     def get(self, request, p_id, email):
         product = get_object_or_404(Product, id=p_id)
         customer = get_object_or_404(Customer, email=email, product=product)
-        return response.Response({'position': customer.position_number, 'email': email, 'registered': True})
+        return response.Response({'position': customer.position_number, 'email': email, 'registered': True, 'referral_id': customer.referral_id})
 
+
+# Retrieves and filters customers for a specific product for admin
+class FilterCustomersForProductsForAdmin(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, p_id):
+        product = get_object_or_404(Product, id=p_id)
+        customers = Customer.objects.filter(product=product)
+        serializer_class = CustomerSerializer(customers, many=True)
+        return Response({'customers': serializer_class.data})
+    
 # Retrieves and filters customers for a specific product
 class FilterCustomersForProducts(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, p_id):
-        product = get_object_or_404(Product, pk=p_id)
-        customers = Customer.objects.filter(product=product).order_by('position_number')
-        serializer = CustomerSerializer(customers, many=True)  # Serialize the queryset
-        return response.Response({'customers': serializer.data})
+    def get(self, request):
+        email = request.user.email
+        products = Product.objects.filter(customers__email=email)
 
+        data = []
+        for product in products:
+            customer = product.customers.filter(email=email).first()
+            if customer:
+                data.append({
+                    'id': product.id,
+                    'name': product.name,
+                    'position_number': customer.position_number,
+                    'referral_id': customer.referral_id
+                })
+
+        return response.Response(data)
+
+class FilterCustomersForProductsWithEmail(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, email):
+        products = Product.objects.filter(customers__email=email)
+
+        data = []
+        for product in products:
+            customer = product.customers.filter(email=email).first()
+            if customer:
+                data.append({
+                    'id': product.id,
+                    'name': product.name,
+                    'position_number': customer.position_number,
+                    'referral_id': customer.referral_id
+                })
+
+        return response.Response(data)
 # Creates a new user
 class CreateUserView(CreateAPIView):
     queryset = User.objects.all()
@@ -62,9 +102,13 @@ class ProductListCreateView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         user = self.request.user
+        print(user)
         # Pass the user to the 'created_by' field during save
-        serializer.save(created_by=user)
+        if user.is_authenticated:
 
+            serializer.save(created_by=user)
+        else:
+            serializer.save()
 # Retrieves, updates, and destroys products
 class ProductRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()

@@ -4,23 +4,20 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import NotFound from '../pages/NotFound';
 
-// Component to handle adding a product, with superuser verification and form submission
 const AddProduct = () => {
     const navigate = useNavigate();
     const [isSuperUser, setIsSuperUser] = useState(false);
     const nameRef = useRef(null);  // useRef for form value
     const cardImageRef = useRef(null);  // useRef for image file
 
-    // Check if the user is a superuser on component mount
     useEffect(() => {
         checkSuperuser();
     }, []);
 
-    // Function to check if the user is a superuser
+    // Check if the user is a superuser
     const checkSuperuser = async () => {
         try {
             const res = await api.get("/api/super-user/");
-            console.log("Response from check_superuser:", res);
             setIsSuperUser(res.data.is_superuser);
         } catch (err) {
             console.error("Error checking superuser:", err);
@@ -32,8 +29,12 @@ const AddProduct = () => {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append('name', nameRef.current.value);  // Add name
-        formData.append('card_image', cardImageRef.current.files[0]);  // Add image file
+        formData.append('name', nameRef.current.value);  // Add product name
+
+        // Only append the card_image if the user selected a file
+        if (cardImageRef.current && cardImageRef.current.files[0]) {
+            formData.append('card_image', cardImageRef.current.files[0]);
+        }
 
         try {
             await api.post(`/api/products/`, formData, {
@@ -44,7 +45,7 @@ const AddProduct = () => {
             toast.success('Product created successfully');
             navigate(`/`);
         } catch (err) {
-            toast.error(err.message);
+            toast.error(err.response?.data?.message || err.message);
         }
     };
 
@@ -53,8 +54,12 @@ const AddProduct = () => {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append('name', nameRef.current.value);  // Add name
-        formData.append('card_image', cardImageRef.current.files[0]);  // Add image file
+        formData.append('name', nameRef.current.value);  // Add product name
+
+        // Only append the card_image if the user selected a file
+        if (cardImageRef.current && cardImageRef.current.files[0]) {
+            formData.append('card_image', cardImageRef.current.files[0]);
+        }
 
         try {
             await api.post(`/api/products/`, formData, {
@@ -63,11 +68,11 @@ const AddProduct = () => {
                 }
             });
             toast.success('Product created successfully');
-            // Clear form field
-            nameRef.current.value = '';  // Reset input field
-            cardImageRef.current.value = '';  // Reset image field
+            // Clear form fields
+            nameRef.current.value = '';  // Reset name input
+            cardImageRef.current.value = '';  // Reset file input
         } catch (err) {
-            toast.error(err.message);
+            toast.error(err.response?.data?.message || err.message);
         }
     };
 
@@ -89,28 +94,30 @@ const AddProduct = () => {
                                         type="text"
                                         name="name"
                                         id="name"
-                                        ref={nameRef}  // Use ref instead of state
+                                        ref={nameRef}
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        required
                                     />
                                 </div>
                             </div>
 
                             <div className="sm:col-span-2">
                                 <label htmlFor="card_image" className="block text-sm font-semibold leading-6 text-gray-900">
-                                    Product Image
+                                    Product Image (Optional)
                                 </label>
                                 <div className="mt-2.5">
                                     <input
                                         type="file"
                                         name="card_image"
                                         id="card_image"
-                                        ref={cardImageRef}  // Reference to image input
+                                        ref={cardImageRef}
                                         className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-                                        accept="image/*"  // Ensure only images can be uploaded
+                                        accept="image/*"
                                     />
                                 </div>
                             </div>
                         </div>
+
                         <div className="mt-10">
                             <button
                                 type="submit"
@@ -119,6 +126,7 @@ const AddProduct = () => {
                                 Submit
                             </button>
                         </div>
+
                         <div className="mt-10">
                             <button
                                 type="button" onClick={handleSaveAndAnother}

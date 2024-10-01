@@ -14,6 +14,7 @@ const ProductDetail = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [customerIsRegistered, setCustomerIsRegistered] = useState(false);
     const [registeredCustomerPosition, setRegisteredCustomerPosition] = useState('');
+    const [registeredCustomerReferralID, setRegisteredCustomerReferralID] = useState('');
     const [loggedInUserEmail, setLoggedInUserEmail] = useState('');
     const { id, referral_id } = useParams();
     const [isSuperUser, setIsSuperUser] = useState(false);
@@ -68,6 +69,7 @@ const ProductDetail = () => {
             const result = await api.get(`api/check-user-registered/${id}/${loggedInUserEmail || ''}/`);
             setRegisteredCustomerPosition(result.data.position);
             setCustomerIsRegistered(result.data.registered);
+            setRegisteredCustomerReferralID(result.data.referral_id)
         } catch (error) {
             console.error('Error checking user registration:', error);
         }
@@ -142,7 +144,7 @@ const ProductDetail = () => {
                         <div className="bg-gradient-to-r from-brightRedLight via-red-600 to-brightRed p-4 rounded-lg shadow-lg mt-6">
                             <h2 className="text-lg font-semibold text-white mb-2">You're Already Registered!</h2>
                             <p className="text-xl font-bold text-white">Position: <span className="text-yellow-300">{registeredCustomerPosition}</span></p>
-                            <p className="text-sm text-white mt-2">Thank you for joining the waitlist. Share your referral link to climb up the list!</p>
+                            <p className="text-sm text-white mt-2">Thank you for joining the waitlist. Share your referral link to climb up the list! -- "{registeredCustomerReferralID}"</p>
                         </div>
                     )}
 

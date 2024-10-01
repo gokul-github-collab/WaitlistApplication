@@ -45,6 +45,7 @@ const Navbar = () => {
                     <NavLink to="/" className="hover:text-darkGrayishBlue">Home</NavLink>
                     <NavLink to="/products" className="hover:text-darkGrayishBlue">Product</NavLink>
                     <NavLink to="/about-us" className="hover:text-darkGrayishBlue">About Us</NavLink>
+                    <NavLink to="/registered-products" className="hover:text-darkGrayishBlue">Registered Items</NavLink>
                     {isSuperUser && <NavLink to="/add-product" className="hover:text-darkGrayishBlue">Add Product</NavLink>}
                 </div>
                 {/* Button */}

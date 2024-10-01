@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-
+import { Link } from 'react-router-dom';
 const FilterCustomers = ({ product_id }) => {
     const [customers, setCustomers] = useState([]);
 
@@ -24,7 +24,7 @@ const FilterCustomers = ({ product_id }) => {
                 customers.map(customer => (
                     <div key={customer.id} className="mb-4">
                         <div className="flex flex-row justify-between items-center bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-                            <h2 className="text-lg font-medium text-gray-700">{customer.email}</h2>
+                            <Link to={`/registered-products/${customer.email}`} className="text-lg font-medium text-orange-400 hover:text-brightRed">{customer.email}</Link>
                             <p className="text-lg text-gray-500">Referral ID: {customer.referral_id}</p>
                             <p className="text-lg text-gray-500">Position: {customer.position_number}</p>
                         </div>

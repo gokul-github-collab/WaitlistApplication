@@ -10,6 +10,7 @@ const EditProduct = () => {
     const [isSuperUser, setIsSuperUser] = useState(false);
     const [name, setName] = useState('');
     const [cardImage, setCardImage] = useState(null); // New state for card_image
+    const [cardImageURL, setCardImageURL] = useState(''); // Separate state for existing image URL
 
     useEffect(() => {
         checkSuperuser();
@@ -34,7 +35,7 @@ const EditProduct = () => {
         try {
             const res = await api.get(`/api/products/${id}/`);
             setName(res.data.name); // Pre-fill the form with product name
-            setCardImage(res.data.card_image); // Pre-fill the form with card image if exists
+            setCardImageURL(res.data.card_image); // Set the image URL for display if it exists
         } catch (err) {
             console.error("Error fetching product details:", err);
             toast.error("Error fetching product details");
@@ -107,9 +108,14 @@ const EditProduct = () => {
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>
-                                {cardImage && typeof cardImage === 'string' && (
+                                {/* If an image is uploaded or exists from API, show it */}
+                                {cardImage ? (
                                     <div className="mt-2">
-                                        <img src={cardImage} alt="Product Card" className="w-full h-64 object-cover" />
+                                        <img src={URL.createObjectURL(cardImage)} alt="Product Card" className="w-full h-64 object-cover" />
+                                    </div>
+                                ) : cardImageURL && (
+                                    <div className="mt-2">
+                                        <img src={cardImageURL} alt="Product Card" className="w-full h-64 object-cover" />
                                     </div>
                                 )}
                             </div>

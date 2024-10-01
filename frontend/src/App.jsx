@@ -1,4 +1,4 @@
- import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route, useNavigate } from 'react-router-dom';
 import Home from './pages/HomePage';
 import Login from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -12,6 +12,7 @@ import Products from './pages/ProductListPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import PositionNumber from './components/PositionNumber';
 import EditProduct from './components/EditProduct';
+import RegisteredItemsPage from './pages/RegisteredItemsPage';
 
 const Logout = () => {
   localStorage.clear()
@@ -28,7 +29,7 @@ const router = createBrowserRouter(
     <>
       <Route path='' element={<MainLayout />}>
 
-        <Route index element={<HomePage />} />
+        <Route index element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path='/products' element={<Products />} />
         <Route path='/products/:id' element={<ProductDetailPage />} />
         <Route path='/products/:id/:referral_id' element={<ProductDetailPage />} />
@@ -38,7 +39,9 @@ const router = createBrowserRouter(
         <Route path='/position/:email/:product_id' element={<PositionNumber />} />
 
 
+        <Route path='/registered-products' element={<RegisteredItemsPage />} />
 
+        <Route path='/registered-products/:email' element={<RegisteredItemsPage />} />
       </Route>
 
 

@@ -10,7 +10,7 @@ from .views import (
     CheckUserRegistered,
     FilterCustomersForProducts,
     CheckPositionAndSendEmailAPIView,
-    CustomerRetrieveyView, ProductDelete
+    CustomerRetrieveyView, ProductDelete, FilterCustomersForProductsWithEmail, FilterCustomersForProductsForAdmin
 )
 
 urlpatterns = [
@@ -22,9 +22,10 @@ urlpatterns = [
     
     path('products/', ProductListCreateView.as_view(), name='product-list'),
     path('products/<int:pk>/', ProductRetrieveUpdateDestroyView.as_view(), name='product-detail'),
-     path("products/delete/<int:pk>/", ProductDelete.as_view(), name="produc-delete"),
-    path('products/<int:p_id>/customers/', 
-         FilterCustomersForProducts.as_view(), name='filter-customers'),
+     path("products/delete/<int:pk>/", ProductDelete.as_view(), name="product-delete"),
+  path('products/<int:p_id>/customers/', FilterCustomersForProductsForAdmin.as_view(), name='filter-customers-for-admin'),
+     path('products/customers/', FilterCustomersForProducts.as_view(), name='filter-customers-with-default-request-method'),
+    path('products/customers/<str:email>/', FilterCustomersForProductsWithEmail.as_view(), name='filter-customers-with-email'),
     
     path('customers/', CustomerListCreateView.as_view(), name='customer-list'),
     path('customers/<int:pk>/', CustomerRetrieveUpdateDestroyView.as_view(), name='customer-detail'),
