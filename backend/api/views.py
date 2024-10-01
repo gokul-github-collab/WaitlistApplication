@@ -11,7 +11,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.response import Response
 from django.utils.crypto import get_random_string
-
+from rest_framework.exceptions import ValidationError
+from django.db import IntegrityError
 # Checks if the current user is a superuser
 class CheckSuperUser(APIView):
     def get(self, request, *args, **kwargs):
@@ -143,10 +144,10 @@ class CustomerRetrieveyView(RetrieveUpdateDestroyAPIView):
         return Response({'position': customer.position_number, 'referral_id': customer.referral_id})
 
 # Registers a new customer
-class RegisterCustomerView(CreateAPIView):
-    permission_classes = [AllowAny]
-    queryset = Customer.objects.all()
-    serializer_class = RegisterSerializer
+# class RegisterCustomerView(CreateAPIView):
+#     permission_classes = [AllowAny]
+#     queryset = Customer.objects.all()
+#     serializer_class = RegisterSerializer
 
 # Checks a customer's position and sends an email if the position is 1
 class CheckPositionAndSendEmailAPIView(APIView):
@@ -174,3 +175,59 @@ class CheckPositionAndSendEmailAPIView(APIView):
         recipient_list = [customer.email]
 
         send_mail(subject, message, from_email, recipient_list)
+
+
+
+class RegisterCustomerView(ListCreateAPIView):
+    permission_classes = [AllowAny]
+    queryset = Customer.objects.all()
+    serializer_class = RegisterSerializer
+
+    def perform_create(self, serializer):
+        customer_email = serializer.validated_data.get('email')
+        product = serializer.validated_data.get('product')
+        referral_id = serializer.validated_data.get('referral_id', None)
+
+        # Check if the customer already exists
+        if Customer.objects.filter(email=customer_email, product=product).exists():
+            raise ValidationError({"error": "Customer already registered."})
+
+        if referral_id:
+            referred_customer = Customer.objects.filter(referral_id=referral_id, product=product).first()
+            if referred_customer:
+                current_position_number = referred_customer.position_number
+                if current_position_number > 1:
+                    target_position_number = current_position_number - 1
+
+                    # Move the referred customer up
+                    referred_customer.position_number = target_position_number
+                    referred_customer.save()
+
+                    # Move other customers up by one position
+                    customers_to_move_up = Customer.objects.filter(
+                        product=product,
+                        position_number__gt=target_position_number
+                    ).order_by('position_number')
+
+                    for customer in customers_to_move_up:
+                        next_position_number = customer.position_number - 1
+                        if not Customer.objects.filter(
+                            product=product,
+                            position_number=next_position_number
+                        ).exists():
+                            customer.position_number = next_position_number
+                            customer.save()
+                        else:
+                            break
+
+        # Determine the new position for the new customer
+        last_position = Customer.objects.filter(product=product).order_by('-position_number').first()
+        new_position_number = 99 if last_position is None else last_position.position_number + 1
+
+        # Create the new customer
+        customer = Customer(
+            email=customer_email,
+            product=product,
+            position_number=new_position_number
+        )
+        customer.save()

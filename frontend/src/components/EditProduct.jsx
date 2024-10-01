@@ -58,7 +58,7 @@ const EditProduct = () => {
                 },
             });
             toast('Product updated successfully');
-            navigate(`/`); // Redirect to the homepage or product list after update
+            navigate(`/products/${product_id}`); // Redirect to the homepage or product list after update
         } catch (err) {
             toast.error(err.message);
         }

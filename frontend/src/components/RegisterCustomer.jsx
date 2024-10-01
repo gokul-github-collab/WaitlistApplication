@@ -28,7 +28,7 @@ const RegisterCustomer = ({ product_id, referral_id }) => {
                 const positionResponse = await api.get(`api/check-position/${referral_id || 'null'}/`);
 
                 // Use the response data to navigate
-                navigate(`/position/${response.data.position_number}/${response.data.referral_id}/${product_id}/${email}`);
+                return navigate(`/position/${email}/${product_id}`);
             }
             console.log('Customer registered successfully:', response.data);
         } catch (error) {

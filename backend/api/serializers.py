@@ -28,7 +28,6 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ('id', 'name', 'created_by', 'customers', 'card_image')
 
-
 # Handles customer registration logic, including position and referral processing
 class RegisterSerializer(serializers.ModelSerializer):
     referral_id = serializers.CharField(max_length=10, required=False, allow_blank=True, allow_null=True)
@@ -38,58 +37,68 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['email', 'product', 'referral_id', "position_number"]
         extra_kwargs = {"position_number": {"read_only": True}}
 
-    def create(self, validated_data):
-        customer_email = validated_data.get('email')
-        product = validated_data.get('product')
-        referral_id = validated_data.get('referral_id', None)
 
-        try:
-            customer_exists = Customer.objects.filter(email=customer_email, product=product).exists()
+# # Handles customer registration logic, including position and referral processing
+# class RegisterSerializer(serializers.ModelSerializer):
+#     referral_id = serializers.CharField(max_length=10, required=False, allow_blank=True, allow_null=True)
 
-            if not customer_exists:
-                if referral_id:
-                    referred_customer = Customer.objects.filter(referral_id=referral_id, product=product).first()
+#     class Meta:
+#         model = Customer
+#         fields = ['email', 'product', 'referral_id', "position_number"]
+#         extra_kwargs = {"position_number": {"read_only": True}}
 
-                    if referred_customer:
-                        current_position_number = referred_customer.position_number
-                        if current_position_number > 1:
-                            target_position_number = current_position_number - 1
+#     def create(self, validated_data):
+#         customer_email = validated_data.get('email')
+#         product = validated_data.get('product')
+#         referral_id = validated_data.get('referral_id', None)
 
-                            # Move the referred customer up
-                            referred_customer.position_number = target_position_number
-                            referred_customer.save()
+#         try:
+#             customer_exists = Customer.objects.filter(email=customer_email, product=product).exists()
 
-                            # Move other customers up by one position
-                            customers_to_move_up = Customer.objects.filter(
-                                product=product,
-                                position_number__gt=target_position_number
-                            ).order_by('position_number')
+#             if not customer_exists:
+#                 if referral_id:
+#                     referred_customer = Customer.objects.filter(referral_id=referral_id, product=product).first()
 
-                            for customer in customers_to_move_up:
-                                next_position_number = customer.position_number - 1
-                                if not Customer.objects.filter(
-                                    product=product,
-                                    position_number=next_position_number
-                                ).exists():
-                                    customer.position_number = next_position_number
-                                    customer.save()
-                                else:
-                                    break
+#                     if referred_customer:
+#                         current_position_number = referred_customer.position_number
+#                         if current_position_number > 1:
+#                             target_position_number = current_position_number - 1
 
-                # Determine the new position for the new customer
-                last_position = Customer.objects.filter(product=product).order_by('-position_number').first()
-                new_position_number = 99 if last_position is None else last_position.position_number + 1
+#                             # Move the referred customer up
+#                             referred_customer.position_number = target_position_number
+#                             referred_customer.save()
 
-                customer = Customer(
-                    email=customer_email, 
-                    product=product, 
-                    position_number=new_position_number
-                )
-                customer.save()
+#                             # Move other customers up by one position
+#                             customers_to_move_up = Customer.objects.filter(
+#                                 product=product,
+#                                 position_number__gt=target_position_number
+#                             ).order_by('position_number')
 
-                return customer
-            else:
-                raise serializers.ValidationError({"error": "Customer already registered."})
+#                             for customer in customers_to_move_up:
+#                                 next_position_number = customer.position_number - 1
+#                                 if not Customer.objects.filter(
+#                                     product=product,
+#                                     position_number=next_position_number
+#                                 ).exists():
+#                                     customer.position_number = next_position_number
+#                                     customer.save()
+#                                 else:
+#                                     break
 
-        except IntegrityError:
-            raise serializers.ValidationError({"error": "Customer registration failed due to an integrity constraint."})
+#                 # Determine the new position for the new customer
+#                 last_position = Customer.objects.filter(product=product).order_by('-position_number').first()
+#                 new_position_number = 99 if last_position is None else last_position.position_number + 1
+
+#                 customer = Customer(
+#                     email=customer_email, 
+#                     product=product, 
+#                     position_number=new_position_number
+#                 )
+#                 customer.save()
+
+#                 return customer
+#             else:
+#                 raise serializers.ValidationError({"error": "Customer already registered."})
+
+#         except IntegrityError:
+#             raise serializers.ValidationError({"error": "Customer registration failed due to an integrity constraint."})
